@@ -1,0 +1,9 @@
+class Main {
+    function void main() {
+        // To tune the length and width of the snake, modify in GluttonousSnake.jack
+        var GluttonousSnake g;
+        let g = GluttonousSnake.new();
+        do g.run();
+        return;
+    }
+}

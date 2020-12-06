@@ -1,0 +1,13 @@
+Project 0 - MPCS 52011 - Intro to Computer Systems
+
+Name: Haoning Chen
+
+1. Command to compile the code:
+    make text_strip
+
+2. Command to run the code:
+    ./text_strip [/path/to/input/file]
+
+3. Notes about the code:
+    The current implementation only support processing the file with ".in" as file name suffix, rather than arbitrary file names.
+?? ?

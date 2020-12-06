@@ -1,0 +1,9 @@
+Project0-MPCS52011-IntrotoComputerSystems
+Name:HaoningChen
+1.Commandtocompilethecode:
+maketext_strip
+2.Commandtorunthecode:
+./text_strip[/path/to/input/file]
+3.Notesaboutthecode:
+Thecurrentimplementationonlysupportprocessingthefilewith".in"asfilenamesuffix,ratherthanarbitraryfilenames.
+???

@@ -1,0 +1,135 @@
+/** Class of a snake in the game GluttonousSnake. It is implemented by a linked list. */
+class Snake {
+    field ListElement head;     // pointer to the list representing the body of snake. 
+    field ListElement tail;     // tail pointer to the list. 
+    field ListElement aux;      // auxiliary pointer. 
+    field char direction;       // current directions of the snake. It must be one of 'left arrow'(130), 'up arrow'(131), 'right arrow'(132) or 'down arrow'(133). 
+    field int newX, newY;       // pixel location of the head's next move. 
+    field boolean freeze;       // a flag indicating whether the snake is frozen (not moving) or not. 
+    field int width;            // body width of the snake. It must be the power of 2. 
+
+    constructor Snake new(int len, int wid) {
+        /** Construct a new snake, with the specified length. */
+        var int i;
+
+        let width = wid;
+        do Screen.setColor(true);
+        let i = 0;
+        while (i < len) {
+            if (i = 0) {
+                let head = ListElement.new(220, 100);
+                let tail = head;
+            }
+            else {
+                do tail.setNext(ListElement.new(220-(width*i), 100));
+                let aux = tail.getNext();
+                do aux.setPre(tail);
+                let tail = aux;
+            }
+            do tail.draw(width);
+            let i = i + 1;
+        }
+        let direction = 132;        // Set the default direction as right
+        let freeze = true;          // Initialized to be not moving
+        let newX = -1;
+        let newY = -1;
+        return this;
+    }
+
+    method int getWidth() { return width; }
+    method char getDir() { return direction; }
+    method void setDir(char dir) {
+        /** Method to set the direction of the snake. 
+            Only input of four arrows are valid. Other keyboard inputs except blankspace simply have no effect.
+        */ 
+        if ((direction = 130 & ~(dir = 132)) |
+            (direction = 131 & ~(dir = 133)) |
+            (direction = 132 & ~(dir = 130)) |
+            (direction = 133 & ~(dir = 131))) { let direction = dir; }  // Input direction being the reverse of the current direction also has no effect. 
+        return;
+    }
+
+    method void setFreeze(boolean f) {
+        let freeze = f;
+        return;
+    }
+
+    method boolean move(ListElement foodList) {
+        /** Method to move the snake on the screen. 
+            If the snake hits its body, it dies. 
+            If the snake eats a piece of food, its length is inremented by 1 pixel. 
+            The method returns true if the snake is not dead after the move; otherwise false is returned. 
+        */
+        // If the snake is frozen, directly return:
+        var ListElement tmp_n, tmp_p;
+        var int tmpX, tmpY;
+
+        if (freeze) {return true;}
+        // Firstly, determine the next pixel of the head location, according to the direction:
+        if (direction = 130) {
+            let newX = head.getX() - width;
+            let newY = head.getY();
+        }
+        if (direction = 131) {
+            let newX = head.getX();
+            let newY = head.getY() - width;
+        }
+        if (direction = 132) {
+            let newX = head.getX() + width;
+            let newY = head.getY();
+        }
+        if (direction = 133) {
+            let newX = head.getX();
+            let newY = head.getY() + width;
+        }
+        // Round the head location if it reaches out of the screen boarder:
+        if (newX < 0) {let newX = 512 - width;}
+        if (newX > 511) {let newX = 0;}
+        if (newY < 0) {let newY = 256 - width;}
+        if (newY > 255) {let newY = 0;}
+
+        // If the head hits its body, it dies:
+        let aux = head;
+        while (~(aux.getNext()=null)) {     // Dont need to check the tail node, because the tail node will be removed when it moves. 
+            if (newX=aux.getX() & newY=aux.getY()) { return false; }
+            let aux = aux.getNext();
+        }
+        // Check wheter the head reaches a piece of food:
+        let aux = foodList.getNext();
+        while (~(aux=null)) {
+            if (newX=aux.getX() & newY=aux.getY()) {
+                // Pick this node off and add to the snake's head:
+                let tmp_n = aux.getNext();
+                let tmp_p = aux.getPre();
+                if (~(tmp_n=null)) { do tmp_n.setPre(tmp_p); }
+                do tmp_p.setNext(tmp_n);
+                do head.setPre(aux);
+                do aux.setNext(head);
+                do aux.setPre(null);
+                let head = aux;
+                return true;
+            }
+            let aux = aux.getNext();
+        }
+        // Move the snake on the screen:
+        let aux = tail;
+        let tail = aux.getPre();
+        do tail.setNext(null);
+        do Screen.setColor(false);
+        do aux.draw(width);
+        do aux.setLocation(newX, newY);
+        do Screen.setColor(true);
+        do aux.draw(width);
+        do aux.setPre(null);
+        do aux.setNext(head);
+        do head.setPre(aux);
+        let head = aux;
+        return true;
+    }
+
+    method void dispose() {
+        do head.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}

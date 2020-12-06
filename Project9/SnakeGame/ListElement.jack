@@ -1,0 +1,52 @@
+/** Element of a double-linked list of Snake pixels. This code is modified on the basis of sample code List.jack */
+class ListElement {
+    field int x;                // row of the pixel. 0 <= x <= 255
+    field int y;                // column of the pixel. 0 <= y <= 511
+    field ListElement next;     // the next element
+    field ListElement pre;      // the former element
+
+    /* Creates a ListElement. */
+    constructor ListElement new(int in_x, int in_y) {
+        let x = in_x;
+        let y = in_y;
+        let next = null;
+        let pre = null; 
+        return this;
+    }
+
+    /* Accessors. */
+    method int getX() { return x; }
+    method int getY() { return y; }
+    method ListElement getNext() { return next; }
+    method ListElement getPre() { return pre; }
+
+    method void setLocation(int in_x, int in_y) {
+        let x = in_x;
+        let y = in_y;
+        return;
+    }
+    method void setNext(ListElement e) { 
+        let next = e; 
+        return;
+    }
+    method void setPre(ListElement e) {
+        let pre = e;
+        return;
+    }
+
+    method void draw(int width) {
+        /** Draw the pixel (rectangle) of this location. */
+        do Screen.drawRectangle(x, y, x+width-1, y+width-1);
+        return;
+    }
+
+    /* Disposes this List by recursively disposing its tail. */
+    method void dispose() {
+        if (~(next = null)) {
+            do next.dispose();
+        }
+        // Uses an OS routine to recycle this object.
+        do Memory.deAlloc(this);
+        return;
+    }
+}

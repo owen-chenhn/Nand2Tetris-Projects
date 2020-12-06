@@ -1,0 +1,38 @@
+/** This class is responsible for placing and scattering foods on the screen. */
+class FoodScatter {
+    field ListElement dummy;     // dummy head of the foodList
+
+    constructor FoodScatter new() {
+        let dummy = ListElement.new(-1, -1);
+        return this;
+    }
+
+    method ListElement scatter(int width) { 
+        var int i, j;
+        var ListElement pointer, tmp;
+
+        do Screen.setColor(true);
+        // Hard code 21 (3x7) pieces of foods:
+        let pointer = dummy;
+        let i = 1;
+        while (i < 4) {
+            let j = 1;
+            while (j < 8) {
+                do pointer.setNext(ListElement.new(64*j, 64*i));
+                let tmp = pointer;
+                let pointer = tmp.getNext();
+                do pointer.setPre(tmp);
+                do pointer.draw(width);
+                let j = j + 1;
+            }
+            let i = i + 1;
+        }
+        return dummy;
+    }
+
+    method void dispose() {
+        do Memory.deAlloc(dummy);
+        do Memory.deAlloc(this);
+        return;
+    }
+}
